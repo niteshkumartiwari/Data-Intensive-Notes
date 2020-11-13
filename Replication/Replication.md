@@ -46,6 +46,40 @@ REASON FOR REPLICATION (fault-taularant, durabililty):
 				-> If some writes happens in some order then anyone reading them will always see them in the same order.
 				-> usually happens in sharded DB(partitioning)
 				-> we will correct casual dependency writes! ( or write them in the same partition if it is possible)
+7.	Multi-leader Replication:
+		-	Scale reads/writes over multiple GEO locations.
+		-	Writes are independently written to local datacenter leader and then replicated to remote leader.
+		-	Problem !!
+				-> Autoincrement, key-constraints ??
+				-> How you will deal with conflicts during leader-leader replications.
+8.	Handling Write Conflicts:
+		-	Conflict Avoidance.
+				-> One User always has writes on the same DC master.
+				-> What will happen when user moves to different DC.
+			- Converging towards consistent state (resolution techniques)
+				-> Give random no, UUID to each write request.
+				-> We can use LWW(last write wins) for conflict resolution.
+				-> Concatinate both conflicts.
+				-> Keep them seperately in different Data-structure to resolve them later.
+9.	Multi-Leader Topologies:
+		-	Circular => One node bottleneck
+		-	Star => same as above
+		- 	All in All=>
+				-> May have out of order writes same as in consistent prefix read.
+				-> How to prevent cyclic recursion replication?=> adding tags of already replicated nodes.
+10. Leaderless replication:
+		-	Read Repair => repair during read
+		- 	anti-entropy process => using background process
+		-	Quorum
+				=> Send W/R to all nodes
+				=> Wait for W nodes to give ACK and R nodes to give ACK 
+				=> W+R > N
+				=> ideally W=R=  ceil[(N+1)/2]
+
+
+
+
+
 
 
 
