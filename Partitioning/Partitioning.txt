@@ -1,0 +1,50 @@
+1.	Reason for Partition:
+		-	Scalability
+		-	For Large dataset
+2. Types of Partitioning techniques based on Primary-Key:
+	-	Key (Range Based)
+			=> Under utilization of resource. Other Servers sit idle.
+	-	Hash of Key
+			=> DIKKAT - Hot Spot(data is not evenly distributed)
+3.	Relieving Hot Spots:
+	-	Add 2 digit random no. to the hotspot and hash it to get the partition.
+		Then it will have 100 such key possible. We need to take care of read queries
+		based on this. (need to read from more one partition).
+4.	Types of Partitioning techniques based on Secondary-Key:
+	-	Document Id (1-400 , 400-800) 
+			=>	Writes were fast. We were maintaining secondary index in the same partiton.
+			=>	Reads were quite expensive since they have to touch every partition.
+				And does Scatter/Gather to accumulate all the data from partitions.
+				(Bottleneck)
+
+	-	Term based
+			=> Partition based on the term. i.e. Keep all the related data to one term in one partition.
+			=> We usually populate secondary indexes asynch. after each write.
+			=> Finding Partition for Each Term
+				*	Terms itself => usful for range queries
+				*	Hash of Terms => more homogenious distribution.
+5.	Rebalancing Partitions:
+	=>	Add/Remove new node
+		-	Fixed partitioning
+				=>	Keep the number of partitions higher from the beginning
+				=>	This value has to be just right otherwise it will create extra overheads(when more). less will (bottleneck)
+		-	Dynamic partitioning
+				=>	We will break after [min,max]
+				=>	Will there be any downtime during replication !?
+
+	=> Automatic Rebalancing 
+		-	DIKKAT - will have domino effect due to one slow node and create network congestion
+6.	Request Routing:
+		-	Gossip protocol
+				=> served by any partition.
+				=> If data is not present in this partition, it is re-routed to correct partition by this current partition. and the response is flown back respectively.
+		-	Routing Tie
+				=> It knows which partition will server which request.
+		-	Client Knows which partition to connect
+
+		=> Use Zookeeper - to know about current nodes ip and PORT.
+
+
+
+
+
